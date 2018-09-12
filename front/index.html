@@ -1,0 +1,342 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>items CRUD</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+  input[type='submit'], button, [aria-label]{
+    cursor: pointer;
+  }
+  #spoiler{
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+  <form action="javascript:void(0);" id="form-add"method="POST" onsubmit="app.Add()"> 
+   <div class="input-group">
+    <label>Name</label>
+    <input type="text" id="add-name" placeholder="New Item">
+  </div>
+  <div class="input-group">
+    <label>Description</label>
+    <textarea id="add-description"  rows="4" cols="50">
+    </textarea>
+  </div>
+  <div class="input-group">
+    <label>Image</label>
+    <input type="file" id="add-image">
+  </div>
+  <div class="input-group">
+    <button class="btn" type="submit" name="save" >Save</button>
+  </div>
+</form>
+
+<div id="spoiler" role="aria-hidden">
+  <form action="javascript:void(0);" method="POST" id="saveEdit">
+    <div class="input-group">
+      <label>Name</label>
+      <input type="text" id="edit-name">
+    </div>
+
+    <div class="input-group">
+      <label>Description<label>
+        <input type="text" id="edit-description">
+      </div>
+      <div class="input-group">
+        <label>Image</label>
+        <input type="file" id="edit-image">
+      </div>
+
+      <input type="submit" value="Edit" /> <a onclick="CloseInput()" aria-label="Close"></a>
+    </form>
+  </div>
+
+  <p id="counter"></p>
+
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Image</th>
+      <th>Actions</th>
+    </tr>
+    <tbody id="items">
+    </tbody>
+  </table>
+
+  <script>
+    var app = new function() {
+      this.url='http://apiMongo.com:3000'
+      this.items = [];
+      this.el = document.getElementById('items');
+
+      var request = new XMLHttpRequest();
+
+      request.open('POST', this.url + '/item/list',true);
+      request.onload = function () {
+
+
+  // Begin accessing JSON data here
+  var data = JSON.parse(this.response);
+  
+  if (request.status >= 200 && request.status < 400) {
+   this.items= data.docs;
+ //  .then(function(){
+  app.FetchAll(data.docs);
+//})
+ //  for(i in (data.docs))
+//{ 
+ //  alert(data.docs[i].name);
+//}
+
+
+} else {
+  const errorMessage = document.createElement('marquee');
+  errorMessage.textContent = `Gah, it's not working!`;
+  app.appendChild(errorMessage);
+}
+}
+
+request.send();
+
+
+
+  //this.items = ['France', 'Germany', 'England', 'Spain', 'Belgium', 'Italy', 'Portugal', 'Irland', 'Luxembourg'];
+ /* fetch('http://apiMongo.com:3000/item/list', {
+        method: "POST", 
+        mode: "no-cors", // no-cors, cors, *same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, same-origin, *omit
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            // "Content-Type": "application/x-www-form-urlencoded",
+            "Access-Control-Allow-Origin": "*",
+        },
+      }).then(
+    function(response) {
+     alert(response.json);
+      if (response.status !== 200 &&  response.status !== 0) {
+        console.log('Looks like there was a problem. Status Code: ' +
+          response.status);
+        return;
+      }
+
+      // Examine the text in the response
+       var pepe = docs;
+        console.log(pepe);
+      });
+      */
+
+
+
+  //this.items =
+  this.Count = function(data) {
+    var el   = document.getElementById('counter');
+    var name = 'country';
+
+    if (data) {
+      if (data > 1) {
+        name = 'items';
+      }
+      el.innerHTML = data + ' ' + name ;
+    } else {
+      el.innerHTML = 'No ' + name;
+    }
+  };
+  
+  this.FetchAll = function(items) {
+    var data = '';
+
+    if(items)this.items=items;
+    if (this.items.length > 0) {
+
+      for (i = 0; i < this.items.length; i++) {
+        data += '<tr>';
+        data += '<td>' + this.items[i].name + '</td>';
+        data += '<td>' + this.items[i].description + '</td>';
+        data += '<td>' + this.items[i].image + '</td>';
+        data += '<td><button class="edit_btn" onclick="app.Edit(\'' + this.items[i]._id +  '\',' + i +  ')' + '">Edit</button></td>';
+        data += '<td><button class="del_btn" onclick="app.Delete(\'' + this.items[i]._id + '\',' + i +  ')' + '">Delete</button></td>';
+        data += '</tr>';
+      }
+    }
+
+    this.Count(this.items.length);
+    return this.el.innerHTML = data;
+  };
+
+  this.Add = function () {
+    addName = document.getElementById('add-name');
+    description = document.getElementById('add-description');
+    image= document.getElementById('add-image');
+      // Get the value
+      var item= new Object();
+      item.name = addName.value;
+      item.order = this.items.length;
+
+      item.description= description.value;
+    //  item.image= image.file
+
+    if (item) {
+
+      var request = new XMLHttpRequest();
+      var data = '{"data":{"name": "' +  item.name + '" , "description": "' + item.description + '" , "image":"' + item.image + '", "order": ' + item.order + '}}';
+    }
+    //var json = JSON.stringify(data);
+
+    request.open('POST', this.url + '/item',true);
+    request.setRequestHeader('Content-type','application/json; charset=utf-8');
+    self=this;
+    request.onload = function () {
+     console.log(this.response);
+
+    // Begin accessing JSON data here
+    var data = JSON.parse(this.response);
+
+    if (request.status >= 200 && request.status < 400) {
+      alert(item.name);
+       item._id=data.doc._id;      
+      self.items.push(item);
+      
+      // Display the new list
+      self.FetchAll();
+
+    } else {
+      
+    }
+  }
+
+  request.send(data);
+
+
+
+
+
+        // Add the new value
+       // this.items.push(item);
+        // Reset input value
+        addName.value = '';
+        description.value='';
+        image.value='';
+        // Dislay the new list
+       // this.FetchAll();
+
+      };
+
+      this.Edit = function (_id,i) {
+
+        var name = document.getElementById('edit-name');
+        var description = document.getElementById('edit-description');
+        var image= document.getElementById('edit-image');
+    // Display value in the field
+    name.value = this.items[i].name;
+    description.value = this.items[i].description;
+    //image.value= this.items[item].image.value;
+    // Display fields
+    document.getElementById('spoiler').style.display = 'block';
+    document.getElementById('form-add').style.display = 'none';
+    self = this;
+
+    document.getElementById('saveEdit').onsubmit = function() {
+      // Get value
+
+      var item =  new Object();
+      item.name = name.value;
+      item.image = image.value ;
+      item.description= description.value;
+      item.order = i;
+      item._id=_id;
+
+
+      
+      if (item.name) {
+
+        var request = new XMLHttpRequest();
+         var data = '{"data":{"name": "' +  item.name + '" , "description": "' + item.description + '" , "image":"' + item.image + '", "order": ' + item.order + '}}';
+
+  request.open('PUT', self.url + '/item/' + _id,true);
+  request.setRequestHeader('Content-type','application/json; charset=utf-8');
+  request.onload = function () {
+ 
+  // Begin accessing JSON data here
+  var data = JSON.parse(this.response);
+
+  if (request.status >= 200 && request.status < 400) {
+
+   self.items[i]=item;
+    // Display the new list
+    self.FetchAll();
+
+  } else {
+    const errorMessage = document.createElement('marquee');
+    errorMessage.textContent = ` it's not working!`;
+    app.appendChild(errorMessage);
+  }
+}
+
+request.send(data);
+
+
+
+        // Edit value
+       // self.items.splice(item, 1, country.trim());
+        // Display the new list
+        self.FetchAll();
+        // Hide fields
+        CloseInput();
+      }
+    }
+  };
+
+  this.Delete = function (item,itemOrder) {
+
+    var request = new XMLHttpRequest();
+    var data = '{"hardDelete": true}' 
+  //var json = JSON.stringify(data);
+
+  request.open('DELETE', this.url + '/item/' + item,true);
+  request.setRequestHeader('Content-type','application/json; charset=utf-8');
+  self=this;
+
+  request.onload = function () {
+   console.log(this.response);
+
+  // Begin accessing JSON data here
+  var data = JSON.parse(this.response);
+ // self = this;
+
+  if (request.status >= 200 && request.status < 400) {
+
+    // Delete the current row
+    self.items.splice(itemOrder, 1);
+    // Display the new list
+    self.FetchAll();
+
+  } else {
+    const errorMessage = document.createElement('marquee');
+    errorMessage.textContent = `Gah, it's not working!`;
+    app.appendChild(errorMessage);
+  }
+}
+
+request.send(data);
+
+
+};
+
+}
+
+//app.FetchAll();
+
+function CloseInput() {
+  document.getElementById('spoiler').style.display = 'none';
+  document.getElementById('form-add').style.display = 'block';
+}
+</script>
+</body>
+</html>
