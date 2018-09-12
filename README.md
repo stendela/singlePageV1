@@ -10,6 +10,7 @@ front: the frontend (html)
 apiMongo: the backend(node,mongo)
 
 Installation
+
 1. Check out the project in a local folder, go with the console to the apiMongo folder.
 
 2 run the command docker-compose up --build.
