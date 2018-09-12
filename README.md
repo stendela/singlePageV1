@@ -2,7 +2,7 @@
 
 This application was created in ubuntu (The operating system and ngnx images  aren't included in the docker file).
 
-<b> Requirements:<b>
+<b> Requirements:</b>
 docker and docker compose installed.
 
 The Repository has 2 folders: 
