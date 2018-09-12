@@ -1,17 +1,19 @@
 # singlePageV1
--This application was created in ubuntu. The operating system and ngnx images  aren't included in the docker file.
 
-Requirements:
+This application was created in ubuntu (The operating system and ngnx images  aren't included in the docker file).
+
+<b> Requirements:<b>
 docker and docker compose installed.
 
 The Repository has 2 folders: 
 
-front: the frontend (html)
+front: the frontend (html) <br>
 apiMongo: the backend(node,mongo)
 
-Installation
+<b> INSTALLATION </b> <br>
 
-1. Check out the project in a local folder, go with the console to the apiMongo folder.
+
+1 Check out the project in a local folder, go with the console to the apiMongo folder.
 
 2 run the command docker-compose up --build.
 
