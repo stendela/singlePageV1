@@ -88,11 +88,7 @@
    this.items= data.docs;
  //  .then(function(){
   app.FetchAll(data.docs);
-//})
- //  for(i in (data.docs))
-//{ 
- //  alert(data.docs[i].name);
-//}
+
 
 
 } else {
@@ -199,7 +195,7 @@ request.send();
     var data = JSON.parse(this.response);
 
     if (request.status >= 200 && request.status < 400) {
-      alert(item.name);
+     
        item._id=data.doc._id;      
       self.items.push(item);
       
