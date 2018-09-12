@@ -19,10 +19,10 @@ app.use(cors());
 // REQUIRE MIDDLEWARE
 var instantMongoCrud = require('express-mongo-crud',option); // require the module
 
-mongoose.connect('localhost:27017/mongocrud');
+mongoose.connect('database:27017/mongocrud');
 
 var options = { //specify options
-    host: `apiMongo.com:${PORT}`
+    host: `localhost:${PORT}`
 }
 
 //USE AS MIDDLEWARE

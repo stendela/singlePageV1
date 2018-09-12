@@ -71,7 +71,7 @@
 
   <script>
     var app = new function() {
-      this.url='http://apiMongo.com:3000'
+      this.url='http://localhost:3000'
       this.items = [];
       this.el = document.getElementById('items');
 
@@ -137,7 +137,7 @@ request.send();
   //this.items =
   this.Count = function(data) {
     var el   = document.getElementById('counter');
-    var name = 'country';
+    var name = 'items';
 
     if (data) {
       if (data > 1) {
@@ -281,10 +281,6 @@ request.send();
 
 request.send(data);
 
-
-
-        // Edit value
-       // self.items.splice(item, 1, country.trim());
         // Display the new list
         self.FetchAll();
         // Hide fields
